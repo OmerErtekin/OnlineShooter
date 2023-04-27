@@ -3,7 +3,7 @@
 #include "Camera/CameraComponent.h"
 #include <Imath/Deploy/Imath-3.1.3/include/Imath/ImathVec.h>
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include "Components/WidgetComponent.h"
 
 AShooterCharacter::AShooterCharacter()
 {
@@ -20,6 +20,9 @@ AShooterCharacter::AShooterCharacter()
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	overheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidet"));
+	overheadWidget->SetupAttachment(RootComponent);
 }
 
 void AShooterCharacter::BeginPlay()
