@@ -1,9 +1,11 @@
 #include "ShooterCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-#include <Imath/Deploy/Imath-3.1.3/include/Imath/ImathVec.h>
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "OnlineShooter/Weapon/Weapon.h"
+
 
 AShooterCharacter::AShooterCharacter()
 {
@@ -25,10 +27,22 @@ AShooterCharacter::AShooterCharacter()
 	overheadWidget->SetupAttachment(RootComponent);
 }
 
+void AShooterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(AShooterCharacter, overlappingWeapon,COND_OwnerOnly);
+}
+
 void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+}
+
+void AShooterCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -42,6 +56,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("Turn", this, &AShooterCharacter::Turn);
 	PlayerInputComponent->BindAxis("LookUp", this, &AShooterCharacter::LookUp);
 }
+
 
 
 void AShooterCharacter::MoveForward(float value)
@@ -72,10 +87,27 @@ void AShooterCharacter::LookUp(float value)
 	AddControllerPitchInput(value);
 }
 
-void AShooterCharacter::Tick(float DeltaTime)
+void AShooterCharacter::SetOverlappingWeapon(AWeapon* weapon)
 {
-	Super::Tick(DeltaTime);
-
+	if (overlappingWeapon)
+	{
+		overlappingWeapon->ShowPickupWidget(false);
+	}
+	overlappingWeapon = weapon;
+	if (IsLocallyControlled() && overlappingWeapon)
+	{
+		overlappingWeapon->ShowPickupWidget(true);
+	}
 }
 
-
+void AShooterCharacter::OnRep_overlappingWeapon(AWeapon* lastWeapon)
+{
+	if (overlappingWeapon)
+	{
+		overlappingWeapon->ShowPickupWidget(true);
+	}
+	if (lastWeapon)
+	{
+		lastWeapon->ShowPickupWidget(false);
+	}
+}

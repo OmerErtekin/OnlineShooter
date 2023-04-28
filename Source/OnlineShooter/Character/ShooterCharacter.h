@@ -10,14 +10,6 @@ UCLASS()
 class ONLINESHOOTER_API AShooterCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
-public:
-	AShooterCharacter();
-
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 protected:
 	virtual void BeginPlay() override;
 
@@ -29,9 +21,22 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		class USpringArmComponent* CameraBoom;
-
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 		class UCameraComponent* FollowCamera;
-	UPROPERTY(EditAnywhere,BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UWidgetComponent* overheadWidget;
+
+	UPROPERTY(ReplicatedUsing = OnRep_overlappingWeapon)
+		class AWeapon* overlappingWeapon;
+	UFUNCTION()
+	void OnRep_overlappingWeapon(AWeapon* lastWeapon);
+
+public:
+	AShooterCharacter();
+
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	void SetOverlappingWeapon(AWeapon* weapon);
 };
