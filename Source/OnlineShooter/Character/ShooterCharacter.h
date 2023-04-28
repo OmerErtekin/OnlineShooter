@@ -17,6 +17,7 @@ protected:
 	void MoveRight(float value);
 	void Turn(float value);
 	void LookUp(float value);
+	void EquipButtonPressed();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -25,11 +26,14 @@ private:
 		class UCameraComponent* FollowCamera;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		class UWidgetComponent* overheadWidget;
-
 	UPROPERTY(ReplicatedUsing = OnRep_overlappingWeapon)
 		class AWeapon* overlappingWeapon;
 	UFUNCTION()
-	void OnRep_overlappingWeapon(AWeapon* lastWeapon);
+		void OnRep_overlappingWeapon(AWeapon* lastWeapon);
+	UPROPERTY(VisibleAnywhere)
+		class UCombatComponent* combat;
+	UFUNCTION(Server,Reliable)
+		void ServerEquipButtonPressed();
 
 public:
 	AShooterCharacter();
@@ -37,6 +41,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
+	virtual void PostInitializeComponents();
 	void SetOverlappingWeapon(AWeapon* weapon);
 };

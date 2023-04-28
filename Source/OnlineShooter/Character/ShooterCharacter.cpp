@@ -5,6 +5,7 @@
 #include "Components/WidgetComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "OnlineShooter/Weapon/Weapon.h"
+#include "OnlineShooter/ShooterComponents/CombatComponent.h"
 
 
 AShooterCharacter::AShooterCharacter()
@@ -25,7 +26,17 @@ AShooterCharacter::AShooterCharacter()
 
 	overheadWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadWidet"));
 	overheadWidget->SetupAttachment(RootComponent);
+
+	combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+	combat->SetIsReplicated(true);
 }
+
+void AShooterCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	combat->character = this;
+}
+
 
 void AShooterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -50,7 +61,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-
+	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &AShooterCharacter::EquipButtonPressed);
 	PlayerInputComponent->BindAxis("MoveForward", this, &AShooterCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AShooterCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &AShooterCharacter::Turn);
@@ -87,6 +98,13 @@ void AShooterCharacter::LookUp(float value)
 	AddControllerPitchInput(value);
 }
 
+void AShooterCharacter::EquipButtonPressed()
+{
+	if (combat == nullptr || !HasAuthority()) return;
+
+	combat->EquipWeapon(overlappingWeapon);
+}
+
 void AShooterCharacter::SetOverlappingWeapon(AWeapon* weapon)
 {
 	if (overlappingWeapon)
@@ -110,4 +128,8 @@ void AShooterCharacter::OnRep_overlappingWeapon(AWeapon* lastWeapon)
 	{
 		lastWeapon->ShowPickupWidget(false);
 	}
+}
+
+void AShooterCharacter::ServerEquipButtonPressed()
+{
 }
