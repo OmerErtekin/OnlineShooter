@@ -8,6 +8,8 @@
 #include "OnlineShooter/ShooterComponents/CombatComponent.h"
 
 
+
+
 AShooterCharacter::AShooterCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -100,9 +102,26 @@ void AShooterCharacter::LookUp(float value)
 
 void AShooterCharacter::EquipButtonPressed()
 {
-	if (combat == nullptr || !HasAuthority()) return;
+	if (combat)
+	{
+		if (HasAuthority())
+		{
+			combat->EquipWeapon(overlappingWeapon);
+		}
+		else
+		{
+			ServerEquipButtonPressed();
+		}
+	}
+	
+}
 
-	combat->EquipWeapon(overlappingWeapon);
+void AShooterCharacter::ServerEquipButtonPressed_Implementation()
+{
+	if (combat)
+	{
+		combat->EquipWeapon(overlappingWeapon);
+	}
 }
 
 void AShooterCharacter::SetOverlappingWeapon(AWeapon* weapon)
@@ -128,8 +147,4 @@ void AShooterCharacter::OnRep_overlappingWeapon(AWeapon* lastWeapon)
 	{
 		lastWeapon->ShowPickupWidget(false);
 	}
-}
-
-void AShooterCharacter::ServerEquipButtonPressed()
-{
 }

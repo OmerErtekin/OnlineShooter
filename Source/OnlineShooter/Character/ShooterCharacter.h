@@ -33,8 +33,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 		class UCombatComponent* combat;
 	UFUNCTION(Server,Reliable)
-		void ServerEquipButtonPressed();
-
+	void ServerEquipButtonPressed();
 public:
 	AShooterCharacter();
 
