@@ -4,6 +4,7 @@
 #include "CombatComponent.h"
 #include "OnlineShooter/Weapon/Weapon.h"
 #include "OnlineShooter/Character/ShooterCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Components/SphereComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -23,6 +24,15 @@ void UCombatComponent::SetAiming(bool state)
 {
 	isAiming = state;
 	ServerSetAiming(state);
+}
+
+void UCombatComponent::OnRep_EquipWeapon()
+{
+	if (currentWeapon && character)
+	{
+		character->GetCharacterMovement()->bOrientRotationToMovement = false;
+		character->bUseControllerRotationYaw = true;
+	}
 }
 
 void UCombatComponent::ServerSetAiming_Implementation(bool state)
@@ -56,6 +66,7 @@ void UCombatComponent::EquipWeapon(AWeapon* weaponToEquip)
 		handSocket->AttachActor(currentWeapon, character->GetMesh());
 	}
 	currentWeapon->SetOwner(character);
-
+	character->GetCharacterMovement()->bOrientRotationToMovement = false;
+	character->bUseControllerRotationYaw = true;
 }
 
