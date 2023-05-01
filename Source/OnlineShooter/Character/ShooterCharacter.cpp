@@ -31,6 +31,8 @@ AShooterCharacter::AShooterCharacter()
 
 	combat = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
 	combat->SetIsReplicated(true);
+
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 }
 
 void AShooterCharacter::PostInitializeComponents()
@@ -44,7 +46,7 @@ void AShooterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME_CONDITION(AShooterCharacter, overlappingWeapon,COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AShooterCharacter, overlappingWeapon, COND_OwnerOnly);
 }
 
 void AShooterCharacter::BeginPlay()
@@ -61,9 +63,10 @@ void AShooterCharacter::Tick(float DeltaTime)
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	
+
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &AShooterCharacter::EquipButtonPressed);
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AShooterCharacter::CrouchButtonPressed);
 	PlayerInputComponent->BindAxis("MoveForward", this, &AShooterCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AShooterCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &AShooterCharacter::Turn);
@@ -78,7 +81,7 @@ void AShooterCharacter::MoveForward(float value)
 
 	const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
 	const FVector Direction(FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X));
-	AddMovementInput(Direction, value); 
+	AddMovementInput(Direction, value);
 }
 
 void AShooterCharacter::MoveRight(float value)
@@ -113,7 +116,7 @@ void AShooterCharacter::EquipButtonPressed()
 			ServerEquipButtonPressed();
 		}
 	}
-	
+
 }
 
 void AShooterCharacter::ServerEquipButtonPressed_Implementation()
@@ -123,6 +126,20 @@ void AShooterCharacter::ServerEquipButtonPressed_Implementation()
 		combat->EquipWeapon(overlappingWeapon);
 	}
 }
+
+
+void AShooterCharacter::CrouchButtonPressed()
+{
+	if (bIsCrouched)
+	{
+		UnCrouch();
+	}
+	else
+	{
+		Crouch();
+	}
+}
+
 
 void AShooterCharacter::SetOverlappingWeapon(AWeapon* weapon)
 {
