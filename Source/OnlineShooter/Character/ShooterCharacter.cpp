@@ -67,6 +67,9 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &AShooterCharacter::EquipButtonPressed);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AShooterCharacter::CrouchButtonPressed);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AShooterCharacter::CrouchButtonReleased);
+	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &AShooterCharacter::AimButtonPressed);
+	PlayerInputComponent->BindAction("Aim", IE_Released, this, &AShooterCharacter::AimButtonRelased);
 	PlayerInputComponent->BindAxis("MoveForward", this, &AShooterCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AShooterCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &AShooterCharacter::Turn);
@@ -103,6 +106,22 @@ void AShooterCharacter::LookUp(float value)
 	AddControllerPitchInput(value);
 }
 
+void AShooterCharacter::AimButtonPressed()
+{
+	if (combat)
+	{
+		combat->SetAiming(true);
+	}
+}
+
+void AShooterCharacter::AimButtonRelased()
+{
+	if (combat)
+	{
+		combat->SetAiming(false);
+	}
+}
+
 void AShooterCharacter::EquipButtonPressed()
 {
 	if (combat)
@@ -130,14 +149,14 @@ void AShooterCharacter::ServerEquipButtonPressed_Implementation()
 
 void AShooterCharacter::CrouchButtonPressed()
 {
-	if (bIsCrouched)
-	{
-		UnCrouch();
-	}
-	else
-	{
+	if (!bIsCrouched)
 		Crouch();
-	}
+}
+
+void AShooterCharacter::CrouchButtonReleased()
+{
+	if (bIsCrouched)
+		UnCrouch();
 }
 
 
@@ -169,4 +188,9 @@ void AShooterCharacter::OnRep_overlappingWeapon(AWeapon* lastWeapon)
 bool AShooterCharacter::IsWeaponEquipped()
 {
 	return combat && combat->currentWeapon;
+}
+
+bool AShooterCharacter::IsAiming()
+{
+	return combat && combat->isAiming;
 }

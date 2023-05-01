@@ -19,6 +19,17 @@ void UCombatComponent::BeginPlay()
 	Super::BeginPlay();	
 }
 
+void UCombatComponent::SetAiming(bool state)
+{
+	isAiming = state;
+	ServerSetAiming(state);
+}
+
+void UCombatComponent::ServerSetAiming_Implementation(bool state)
+{
+	isAiming = state;
+}
+
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
@@ -29,6 +40,8 @@ void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UCombatComponent, currentWeapon);
+	DOREPLIFETIME(UCombatComponent, isAiming);
+
 }
 
 void UCombatComponent::EquipWeapon(AWeapon* weaponToEquip)
