@@ -148,3 +148,8 @@ void AShooterCharacter::OnRep_overlappingWeapon(AWeapon* lastWeapon)
 		lastWeapon->ShowPickupWidget(false);
 	}
 }
+
+bool AShooterCharacter::IsWeaponEquipped()
+{
+	return combat && combat->currentWeapon;
+}

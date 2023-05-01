@@ -23,22 +23,23 @@ class ONLINESHOOTER_API AWeapon : public AActor
 public:
 	AWeapon();
 	virtual void Tick(float DeltaTime) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void ShowPickupWidget(bool state);
 
 protected:
 	virtual void BeginPlay() override;
 	UFUNCTION()
-	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult);
+		virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent,
+			AActor* OtherActor,
+			UPrimitiveComponent* OtherComp,
+			int32 OtherBodyIndex,
+			bool bFromSweep,
+			const FHitResult& SweepResult);
 	UFUNCTION()
-	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex);
+		virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent,
+			AActor* OtherActor,
+			UPrimitiveComponent* OtherComp,
+			int32 OtherBodyIndex);
 
 
 private:
@@ -46,10 +47,12 @@ private:
 		USkeletalMeshComponent* weaponMesh;
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 		class USphereComponent* triggerAreaSphere;
-	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
+	UPROPERTY(ReplicatedUsing = OnRep_weaponState, VisibleAnywhere, Category = "Weapon Properties")
 		EWeaponState weaponState;
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Properties")
 		class UWidgetComponent* pickupWidget;
+	UFUNCTION()
+		void OnRep_weaponState();
 public:
-	FORCEINLINE void SetWeaponState(EWeaponState state) { weaponState = state; }
+	void SetWeaponState(EWeaponState state);
 };

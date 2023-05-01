@@ -7,14 +7,15 @@
 #include "CombatComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ONLINESHOOTER_API UCombatComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	UCombatComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	friend class AShooterCharacter;
 
 	void EquipWeapon(class AWeapon* weaponToEquip);
@@ -22,7 +23,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	class AShooterCharacter* character;
-	class AWeapon* currentWeapon;
+	UPROPERTY(Replicated)
+		class AWeapon* currentWeapon;
 };
