@@ -6,7 +6,7 @@
 #include "Net/UnrealNetwork.h"
 #include "OnlineShooter/Weapon/Weapon.h"
 #include "OnlineShooter/ShooterComponents/CombatComponent.h"
-
+#include "Components/CapsuleComponent.h"
 
 
 
@@ -33,6 +33,8 @@ AShooterCharacter::AShooterCharacter()
 	combat->SetIsReplicated(true);
 
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 }
 
 void AShooterCharacter::PostInitializeComponents()

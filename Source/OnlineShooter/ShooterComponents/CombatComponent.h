@@ -34,4 +34,7 @@ public:
 		class AWeapon* currentWeapon;
 	UPROPERTY(Replicated)
 	bool isAiming;
+
+	float baseWalkSpeed = 600.f;
+	float aimWalkSpeed = 400.f;
 };
