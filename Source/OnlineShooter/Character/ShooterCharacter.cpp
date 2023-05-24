@@ -7,7 +7,7 @@
 #include "OnlineShooter/Weapon/Weapon.h"
 #include "OnlineShooter/ShooterComponents/CombatComponent.h"
 #include "Components/CapsuleComponent.h"
-
+#include "Kismet/KismetMathLibrary.h"
 
 
 AShooterCharacter::AShooterCharacter()
@@ -60,6 +60,7 @@ void AShooterCharacter::BeginPlay()
 void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	AimOffset(DeltaTime);
 }
 
 void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -159,6 +160,40 @@ void AShooterCharacter::CrouchButtonReleased()
 {
 	if (bIsCrouched)
 		UnCrouch();
+}
+
+void AShooterCharacter::AimOffset(float DeltaTime)
+{
+	if (combat && combat->currentWeapon == nullptr) return;
+
+	FVector velocity = GetVelocity();
+	velocity.Z = 0.f;
+	float speed = velocity.Size();
+
+	bool isInAir = GetCharacterMovement()->IsFalling();
+	if (speed == 0.f && !isInAir)
+	{
+		FRotator currentAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		FRotator deltaAimRotation = UKismetMathLibrary::NormalizedDeltaRotator(currentAimRotation, startAimRotation);
+		AO_Yaw = deltaAimRotation.Yaw;
+		bUseControllerRotationYaw = false;
+	}
+
+	if (speed > 0.f || isInAir) //run or jump
+	{
+		startAimRotation = FRotator(0.f, GetBaseAimRotation().Yaw, 0.f);
+		AO_Yaw = 0.f;
+		bUseControllerRotationYaw = true;
+	}
+
+
+	AO_Pitch = GetBaseAimRotation().Pitch;
+	if (AO_Pitch > 90.f && !IsLocallyControlled())
+	{
+		FVector2D inRange(270.f, 360.f);
+		FVector2D outRange(-90.f, 0.f);
+		AO_Pitch = FMath::GetMappedRangeValueClamped(inRange, outRange, AO_Pitch);
+	}
 }
 
 

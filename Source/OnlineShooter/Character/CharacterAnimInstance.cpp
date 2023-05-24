@@ -47,5 +47,8 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float deltaTime)
 	const float target = delta.Yaw / deltaTime;
 	const float interpolated = FMath::FInterpTo(Lean, target, deltaTime, 6.f);
 	Lean = FMath::Clamp(interpolated, -90.f, 90.f);
+
+	AO_Yaw = shooterCharacter->GetAOYaw();
+	AO_Pitch = shooterCharacter->GetAOPitch();
 }
  

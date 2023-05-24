@@ -22,6 +22,7 @@ protected:
 	void EquipButtonPressed();
 	void CrouchButtonPressed();
 	void CrouchButtonReleased();
+	void AimOffset(float DeltaTime);
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -38,6 +39,11 @@ private:
 		class UCombatComponent* combat;
 	UFUNCTION(Server,Reliable)
 	void ServerEquipButtonPressed();
+
+	float AO_Yaw;
+	float AO_Pitch;
+	FRotator startAimRotation;
+
 public:
 	AShooterCharacter();
 
@@ -48,4 +54,7 @@ public:
 	void SetOverlappingWeapon(AWeapon* weapon);
 	bool IsWeaponEquipped();
 	bool IsAiming();
+
+	FORCEINLINE float GetAOYaw() const { return AO_Yaw; }
+	FORCEINLINE float GetAOPitch() const { return AO_Pitch; }
 };
