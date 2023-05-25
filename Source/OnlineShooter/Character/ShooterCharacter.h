@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "OnlineShooter/ShooterTypes/TurningInPlace.h"
 #include "ShooterCharacter.generated.h"
 
 UCLASS()
@@ -43,6 +43,7 @@ private:
 	float AO_Yaw;
 	float AO_Pitch;
 	FRotator startAimRotation;
+	ETurningInPlace turningInPlace;
 
 public:
 	AShooterCharacter();
@@ -57,5 +58,6 @@ public:
 
 	FORCEINLINE float GetAOYaw() const { return AO_Yaw; }
 	FORCEINLINE float GetAOPitch() const { return AO_Pitch; }
+	FORCEINLINE ETurningInPlace GetTurningInPlace() const { return turningInPlace; }
 	AWeapon* GetEquipedWeapon();
 };

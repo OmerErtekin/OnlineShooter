@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "OnlineShooter/ShooterTypes/TurningInPlace.h"
 #include "CharacterAnimInstance.generated.h"
 
 /**
@@ -58,5 +58,8 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 		FTransform leftHandTransform;
 
-	FRotator charRotationLastFrame,charRotationThisFrame,deltaRotation;
+	FRotator charRotationLastFrame, charRotationThisFrame, deltaRotation;
+
+	UPROPERTY(BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
+		ETurningInPlace turningInPlace;
 };

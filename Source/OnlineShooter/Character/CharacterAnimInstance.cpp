@@ -33,6 +33,7 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float deltaTime)
 	equippedWeapon = shooterCharacter->GetEquipedWeapon();
 	isAiming = shooterCharacter->IsAiming();
 	isCrouched = shooterCharacter->bIsCrouched;
+	turningInPlace = shooterCharacter->GetTurningInPlace();
 	
 	FRotator aimRotation = shooterCharacter->GetBaseAimRotation();
 	FRotator movementRotation = UKismetMathLibrary::MakeRotFromX(shooterCharacter->GetVelocity());
