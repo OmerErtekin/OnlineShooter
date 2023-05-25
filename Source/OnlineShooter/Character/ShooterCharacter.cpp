@@ -70,7 +70,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AShooterCharacter::Jump);
 	PlayerInputComponent->BindAction("Equip", IE_Pressed, this, &AShooterCharacter::EquipButtonPressed);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &AShooterCharacter::CrouchButtonPressed);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AShooterCharacter::CrouchButtonReleased);
@@ -155,7 +155,7 @@ void AShooterCharacter::ServerEquipButtonPressed_Implementation()
 
 void AShooterCharacter::CrouchButtonPressed()
 {
-	if (!bIsCrouched)
+	if (!bIsCrouched && !GetCharacterMovement()->IsFalling())
 		Crouch();
 }
 
@@ -197,6 +197,18 @@ void AShooterCharacter::AimOffset(float DeltaTime)
 		FVector2D inRange(270.f, 360.f);
 		FVector2D outRange(-90.f, 0.f);
 		AO_Pitch = FMath::GetMappedRangeValueClamped(inRange, outRange, AO_Pitch);
+	}
+}
+
+void AShooterCharacter::Jump()
+{
+	if (bIsCrouched)
+	{
+		UnCrouch();
+	}
+	else
+	{
+		Super::Jump();
 	}
 }
 
