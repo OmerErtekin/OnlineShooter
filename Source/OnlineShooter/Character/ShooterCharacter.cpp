@@ -231,3 +231,11 @@ bool AShooterCharacter::IsAiming()
 {
 	return combat && combat->isAiming;
 }
+
+AWeapon* AShooterCharacter::GetEquipedWeapon()
+{
+	if(combat == nullptr)
+		return nullptr;
+
+	return combat->currentWeapon;
+}

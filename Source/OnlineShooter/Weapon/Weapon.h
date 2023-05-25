@@ -26,6 +26,8 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void ShowPickupWidget(bool state);
 
+	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return weaponMesh; }
+
 protected:
 	virtual void BeginPlay() override;
 	UFUNCTION()
