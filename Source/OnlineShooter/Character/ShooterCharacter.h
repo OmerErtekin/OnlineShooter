@@ -40,6 +40,7 @@ private:
 	UFUNCTION(Server,Reliable)
 	void ServerEquipButtonPressed();
 
+
 	float AO_Yaw;
 	float AO_Pitch;
 	FRotator startAimRotation;
