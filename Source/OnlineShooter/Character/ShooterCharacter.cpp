@@ -6,6 +6,7 @@
 #include "Net/UnrealNetwork.h"
 #include "OnlineShooter/Weapon/Weapon.h"
 #include "OnlineShooter/ShooterComponents/CombatComponent.h"
+#include "CharacterAnimInstance.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -76,6 +77,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &AShooterCharacter::CrouchButtonReleased);
 	PlayerInputComponent->BindAction("Aim", IE_Pressed, this, &AShooterCharacter::AimButtonPressed);
 	PlayerInputComponent->BindAction("Aim", IE_Released, this, &AShooterCharacter::AimButtonRelased);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &AShooterCharacter::FireButtonPressed);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &AShooterCharacter::FireButtonReleased);
 	PlayerInputComponent->BindAxis("MoveForward", this, &AShooterCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AShooterCharacter::MoveRight);
 	PlayerInputComponent->BindAxis("Turn", this, &AShooterCharacter::Turn);
@@ -165,6 +168,22 @@ void AShooterCharacter::CrouchButtonReleased()
 		UnCrouch();
 }
 
+void AShooterCharacter::FireButtonPressed()
+{
+	if (combat)
+	{
+		combat->FireButtonPressed(true);
+	}
+}
+
+void AShooterCharacter::FireButtonReleased()
+{
+	if (combat)
+	{
+		combat->FireButtonPressed(false);
+	}
+}
+
 void AShooterCharacter::AimOffset(float DeltaTime)
 {
 	if (combat && combat->currentWeapon == nullptr) return;
@@ -246,6 +265,22 @@ bool AShooterCharacter::IsWeaponEquipped()
 bool AShooterCharacter::IsAiming()
 {
 	return combat && combat->isAiming;
+}
+
+void AShooterCharacter::PlayFireMontage(bool isAiming)
+{
+	if (combat == nullptr || combat->currentWeapon == nullptr) return;
+
+	UAnimInstance* animInstance = GetMesh()->GetAnimInstance();
+	if (animInstance && FireWeaponMontage)
+	{
+		animInstance->Montage_Play(FireWeaponMontage);
+		FName sectionName;
+
+		sectionName = isAiming ? FName("RifleAim") : FName("RifleHip");
+		animInstance->Montage_JumpToSection(sectionName);
+	}
+	
 }
 
 AWeapon* AShooterCharacter::GetEquipedWeapon()

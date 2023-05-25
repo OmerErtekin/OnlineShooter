@@ -22,6 +22,8 @@ protected:
 	void EquipButtonPressed();
 	void CrouchButtonPressed();
 	void CrouchButtonReleased();
+	void FireButtonPressed();
+	void FireButtonReleased();
 	void AimOffset(float DeltaTime);
 	virtual void Jump() override;
 private:
@@ -46,6 +48,9 @@ private:
 	FRotator startAimRotation;
 	ETurningInPlace turningInPlace;
 
+	UPROPERTY(EditAnywhere, Category = Combat)
+	class UAnimMontage* FireWeaponMontage;
+
 public:
 	AShooterCharacter();
 
@@ -56,6 +61,8 @@ public:
 	void SetOverlappingWeapon(AWeapon* weapon);
 	bool IsWeaponEquipped();
 	bool IsAiming();
+
+	void PlayFireMontage(bool isAiming);
 
 	FORCEINLINE float GetAOYaw() const { return AO_Yaw; }
 	FORCEINLINE float GetAOPitch() const { return AO_Pitch; }

@@ -28,6 +28,8 @@ protected:
 		void ServerSetAiming(bool state);
 	UFUNCTION()
 	void OnRep_EquipWeapon();
+
+	void FireButtonPressed(bool isPressed);
 public:
 	class AShooterCharacter* character;
 	UPROPERTY(ReplicatedUsing = OnRep_EquipWeapon)
@@ -37,4 +39,5 @@ public:
 
 	float baseWalkSpeed = 600.f;
 	float aimWalkSpeed = 400.f;
+	bool isFireButtonPressed;
 };
