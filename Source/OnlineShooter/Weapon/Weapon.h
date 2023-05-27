@@ -25,6 +25,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void ShowPickupWidget(bool state);
+	void Fire();
 
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return weaponMesh; }
 
@@ -55,6 +56,8 @@ private:
 		class UWidgetComponent* pickupWidget;
 	UFUNCTION()
 		void OnRep_weaponState();
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+		class UAnimationAsset* fireAnimation;
 public:
 	void SetWeaponState(EWeaponState state);
 };

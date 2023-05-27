@@ -3,6 +3,8 @@
 #include "Components/WidgetComponent.h"
 #include "OnlineShooter/Character/ShooterCharacter.h"
 #include "Net/UnrealNetwork.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Animation/AnimationAsset.h"
 
 AWeapon::AWeapon()
 {
@@ -100,5 +102,13 @@ void AWeapon::ShowPickupWidget(bool state)
 {
 	if (!pickupWidget) return;
 	pickupWidget->SetVisibility(state);
+}
+
+void AWeapon::Fire()
+{
+	if (fireAnimation)
+	{
+		weaponMesh->PlayAnimation(fireAnimation, false);
+	}
 }
 

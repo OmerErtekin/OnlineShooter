@@ -56,9 +56,13 @@ void UCombatComponent::OnRep_EquipWeapon()
 void UCombatComponent::FireButtonPressed(bool isPressed)
 {
 	isFireButtonPressed = isPressed;
+
+	if (currentWeapon == nullptr) return;
+
 	if (character && isPressed)
 	{
 		character->PlayFireMontage(isAiming);
+		currentWeapon->Fire();
 	}
 }
 
