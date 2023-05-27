@@ -27,15 +27,21 @@ protected:
 	UFUNCTION(Server, Reliable)
 		void ServerSetAiming(bool state);
 	UFUNCTION()
-	void OnRep_EquipWeapon();
+		void OnRep_EquipWeapon();
 
 	void FireButtonPressed(bool isPressed);
+	UFUNCTION(Server, Reliable)
+		void ServerFire();
+
+	UFUNCTION(NetMulticast, Reliable)
+		void MulticastFire();
 public:
+
 	class AShooterCharacter* character;
 	UPROPERTY(ReplicatedUsing = OnRep_EquipWeapon)
 		class AWeapon* currentWeapon;
 	UPROPERTY(Replicated)
-	bool isAiming;
+		bool isAiming;
 
 	float baseWalkSpeed = 600.f;
 	float aimWalkSpeed = 400.f;
