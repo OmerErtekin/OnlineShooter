@@ -35,6 +35,8 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 		void MulticastFire();
+
+	void TraceUnderCrosshairs(FHitResult& traceHitResult);
 public:
 
 	class AShooterCharacter* character;

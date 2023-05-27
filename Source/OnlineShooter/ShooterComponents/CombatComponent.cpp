@@ -8,10 +8,14 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "Components/SphereComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
+#include "DrawDebugHelpers.h"
+
+#define TRACE_LENGTH 80000.f
 // Sets default values for this component's properties
 UCombatComponent::UCombatComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 
@@ -60,6 +64,40 @@ void UCombatComponent::FireButtonPressed(bool isPressed)
 		ServerFire();
 }
 
+void UCombatComponent::TraceUnderCrosshairs(FHitResult& traceHitResult)
+{
+	FVector2D viewPortSize;
+	if (GEngine && GEngine->GameViewport)
+	{
+		GEngine->GameViewport->GetViewportSize(viewPortSize);
+	}
+
+	FVector2D crossHairLocation(viewPortSize.X / 2.f, viewPortSize.Y / 2.f);
+	FVector crossHairWorldPosition;
+	FVector crossHairWorldDirection;
+	bool isScreenedToWorld = UGameplayStatics::DeprojectScreenToWorld(
+		UGameplayStatics::GetPlayerController(this, 0),
+		crossHairLocation,crossHairWorldPosition,crossHairWorldDirection
+	);
+
+	if (isScreenedToWorld)
+	{
+		FVector start = crossHairWorldPosition;
+		FVector end = start + crossHairWorldDirection * TRACE_LENGTH;
+
+		GetWorld()->LineTraceSingleByChannel(traceHitResult, start, end, ECollisionChannel::ECC_Visibility);
+		if (!traceHitResult.bBlockingHit)
+		{
+			traceHitResult.ImpactPoint = end;
+		}
+		else
+		{
+			DrawDebugSphere(GetWorld(), traceHitResult.ImpactPoint, 15.f, 15, FColor::Red);
+		}
+	}
+
+}
+
 void UCombatComponent::MulticastFire_Implementation()
 {
 	if (currentWeapon == nullptr) return;
@@ -81,6 +119,8 @@ void UCombatComponent::ServerFire_Implementation()
 void UCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	FHitResult hitResult;
+	TraceUnderCrosshairs(hitResult);
 }
 
 void UCombatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
