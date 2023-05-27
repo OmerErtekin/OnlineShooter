@@ -48,4 +48,6 @@ public:
 	float baseWalkSpeed = 600.f;
 	float aimWalkSpeed = 400.f;
 	bool isFireButtonPressed;
+
+	FVector hitTarget;
 };
