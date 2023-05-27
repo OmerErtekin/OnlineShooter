@@ -60,8 +60,12 @@ void UCombatComponent::OnRep_EquipWeapon()
 void UCombatComponent::FireButtonPressed(bool isPressed)
 {
 	isFireButtonPressed = isPressed;
-	if(isFireButtonPressed)
-		ServerFire();
+	if (isFireButtonPressed)
+	{
+		FHitResult hitResult;
+		TraceUnderCrosshairs(hitResult);
+		ServerFire(hitResult.ImpactPoint);
+	}
 }
 
 void UCombatComponent::TraceUnderCrosshairs(FHitResult& traceHitResult)
@@ -86,35 +90,23 @@ void UCombatComponent::TraceUnderCrosshairs(FHitResult& traceHitResult)
 		FVector end = start + crossHairWorldDirection * TRACE_LENGTH;
 
 		GetWorld()->LineTraceSingleByChannel(traceHitResult, start, end, ECollisionChannel::ECC_Visibility);
-		if (!traceHitResult.bBlockingHit)
-		{
-			traceHitResult.ImpactPoint = end;
-			hitTarget = end;
-		}
-		else
-		{
-			hitTarget = traceHitResult.ImpactPoint;
-			DrawDebugSphere(GetWorld(), traceHitResult.ImpactPoint, 15.f, 15, FColor::Red);
-		}
-		
 	}
-
 }
 
-void UCombatComponent::MulticastFire_Implementation()
+void UCombatComponent::MulticastFire_Implementation(const FVector_NetQuantize& traceHitTarget)
 {
 	if (currentWeapon == nullptr) return;
 
 	if (character)
 	{
 		character->PlayFireMontage(isAiming);
-		currentWeapon->Fire(hitTarget);
+		currentWeapon->Fire(traceHitTarget);
 	}
 }
 
-void UCombatComponent::ServerFire_Implementation()
+void UCombatComponent::ServerFire_Implementation(const FVector_NetQuantize& traceHitTarget)
 {
-	MulticastFire();
+	MulticastFire(traceHitTarget);
 }
 
 

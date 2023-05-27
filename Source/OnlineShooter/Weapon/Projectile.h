@@ -10,19 +10,25 @@ UCLASS()
 class ONLINESHOOTER_API AProjectile : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	AProjectile();
 
 protected:
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
 
 	UPROPERTY(EditAnywhere)
-	class UBoxComponent* collisionBox;
+		class UBoxComponent* collisionBox;
+	UPROPERTY(VisibleAnywhere)
+		class UProjectileMovementComponent* projectileMovementComponent;
+	UPROPERTY(EditAnywhere)
+		class UParticleSystem* tracer;
+
+	class UParticleSystemComponent* tracerComponent;
 
 };
