@@ -17,8 +17,11 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION()
+		virtual void OnHit(UPrimitiveComponent* hitComp, AActor* otherActor, UPrimitiveComponent* otherComp, FVector normalImpulse, const FHitResult& hit);
 public:
 	virtual void Tick(float DeltaTime) override;
+	virtual void Destroyed() override;
 
 private:
 
@@ -31,4 +34,8 @@ private:
 
 	class UParticleSystemComponent* tracerComponent;
 
+	UPROPERTY(EditAnywhere)
+		UParticleSystem* impactParticles;
+	UPROPERTY(EditAnywhere)
+		class USoundCue* impactSound;
 };
